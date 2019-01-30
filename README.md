@@ -224,11 +224,10 @@ If you intend to work on the code remember to fork on github and then clone your
 ```
 git clone https://github.com/theWebalyst/safenetworkjs
 cd safenetworkjs
-yarn
+NODE_ENV=dev yarn
 yarn link
 ```
-
-Note: any time you update packages here you will need to repeat the `yarn link` step or SAFE Drive will not work.
+Note: any time you `yarn add <package>` you need `NODE_ENV=dev` set in order to ensure the debug versions of `safe-app-nodejs` are installed.
 
 ### b) Clone safe-drive:
 If you intend to work on the code remember to fork on github and then clone your fork. The following just clones the main repo:
@@ -238,8 +237,7 @@ cd safe-drive
 NODE_ENV=dev yarn
 yarn link safenetworkjs
 ```
-
-Note: any time you add or remove packages here you will need to repeat the `yarn link safenetworkjs` step or SAFE Drive will not use your copy of safentworkjs.
+Note: any time you `yarn add <package>` you need `NODE_ENV=dev` set in order to ensure the debug versions of `safe-app-nodejs` are installed.
 
 ### c) Install dependencies:
 ```
