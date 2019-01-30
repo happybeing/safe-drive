@@ -92,7 +92,7 @@ the code, but if they become too outdated to help please either update them
 or remove them.
 
 SAFE-VFS design follows, please refer to ./docs for additional design
-documentation including the master architectural diagram for SAFE FUSE.
+documentation including the master architectural diagram for SAFE Drive.
 
 SafeVfs
 -------
@@ -350,11 +350,11 @@ class SafeVfs {
           })
         })
       }).catch((err) => {
-        debug('ERROR - failed to mount SAFE FUSE volume')
+        debug('ERROR - failed to mount SAFE Drive volume')
         throw err
       })
     } catch (err) {
-      debug('ERROR - failed to mount SAFE FUSE volume')
+      debug('ERROR - failed to mount SAFE Drive volume')
       throw err
     }
   }
@@ -363,7 +363,7 @@ class SafeVfs {
     return new Promise((resolve, reject) => {
       return Fuse.unmount(mountPath, err => {
         if (err) {
-          debug('Failed to unmount SAFE FUSE volume at: %s', mountPath)
+          debug('Failed to unmount SAFE Drive volume at: %s', mountPath)
           debug(err)
           reject(err)
         } else {

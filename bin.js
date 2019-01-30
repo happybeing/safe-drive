@@ -17,8 +17,8 @@ const mountPath = path.join(Os.homedir(), 'SAFE')
 
 // TODO: parameterise these? or separate out?
 let appConfig = {
-  id: 'safenetwork-fuse',
-  name: 'SAFE Network FUSE',
+  id: 'safe-drive',
+  name: 'SAFE Drive',
   vendor: 'theWebalyst'
 }
 
@@ -37,7 +37,7 @@ const containerOpts = {
   own_container: false
 }
 
-let mountFailedMessage = 'Failed to un-mount SAFE FUSE volume'
+let mountFailedMessage = 'Failed to un-mount SAFE Drive volume'
 mountFailedMessage += (process.platform !== 'win32' ? '\n\nType \'sudo umount ~/SAFE\' and try again.'
         : '') // TODO insert in advice for Windows here
 
@@ -136,7 +136,7 @@ process.on('SIGINT', () => {
     })
   } catch (err) {
     console.error(err.message)
-    let msg = 'Failed to un-mount SAFE FUSE volume'
+    let msg = 'Failed to un-mount SAFE Drive volume'
     msg += (process.platform !== 'win32' ? '\n\nType \'sudo umount ~/SAFE\' and try again.'
             : '') // TODO insert in advice for Windows here
     debug(msg)
