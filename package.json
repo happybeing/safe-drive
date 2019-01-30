@@ -1,0 +1,65 @@
+{
+  "name": "safe-drive",
+  "version": "0.1.0",
+  "description": "Mount SAFE Network as a local drive (using FUSE)",
+  "main": "bin.js",
+  "scripts": {
+    "start": "node bin",
+    "build": "echo command DEPRECATED for now (build scripts need updating) && exit 0 && mkdir -p ./dist/prod/node_modules/@maidsafe/safe-node-app/src/native/prod/ && cp -R node_modules/@maidsafe/safe-node-app/src/native/prod/*.* ./dist/prod/node_modules/@maidsafe/safe-node-app/src/native/prod/ && pkg . -t host -o ./dist/prod/mount-safe",
+    "buildall": "echo command DEPRECATED for now (build scripts need updating) && exit 0 && mkdir -p ./dist/prod/node_modules/@maidsafe/safe-node-app/src/native/prod/ && cp -R node_modules/@maidsafe/safe-node-app/src/native/prod/*.* ./dist/prod/node_modules/@maidsafe/safe-node-app/src/native/prod/ && pkg . -t linux,macos,win -o ./dist/prod/mount-safe",
+    "build-mock": "echo command DEPRECATED for now (build scripts need updating) && exit 0 && mkdir -p ./dist/mock/node_modules/@maidsafe/safe-node-app/src/native/mock/ && cp -R node_modules/@maidsafe/safe-node-app/src/native/mock/*.* ./dist/mock/node_modules/@maidsafe/safe-node-app/src/native/mock/ && pkg . -t host -o ./dist/mock/mount-safe",
+    "buildall-mock": "echo command DEPRECATED for now (build scripts need updating) && exit 0 && mkdir -p ./dist/mock/node_modules/@maidsafe/safe-node-app/src/native/mock/ && cp -R node_modules/@maidsafe/safe-node-app/src/native/mock/*.* ./dist/mock/node_modules/@maidsafe/safe-node-app/src/native/mock/ && pkg . -t linux,macos,win -o ./dist/mock/mount-safe",
+    "testbuild": "pkg . -d -t node8-linux-x64 -o ./dist/mock/mount-safe",
+    "testbuild1": "pkg bin.js -d -t node8-linux-x64 -o ./dist/mock/mount-safe",
+    "testbuild2": "pkg . -d -t host -o ./dist/mock/mount-safe",
+    "testbuild3": "pkg ./src/bin.js -d -t host -o ./dist/mock/mount-safe",
+    "testbuild-doesnt-package-assets": "pkg -d -t host -o ./dist/mock/mount-safe bin.js",
+    "tw-docs": "cp -R /home/mrh/Notebooks/Notes/computers-Project_SAFE/SAFE-App-Ideas/SAFE-App_Drive_\\(FUSE\\)/SAFE-FUSE_Design_\\(repo\\) ./docs/zim-wiki/"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/@maidsafe/safe-node-app/src/native/prod/*.*",
+      "node_modules/@maidsafe/safe-node-app/src/native/mock/*.*",
+      "node_modules/fuse-bindings/prebuilds/**/*.*"
+    ]
+  },
+  "bin": {
+    "safenetwork-fuse": "bin.js"
+  },
+  "keywords": [
+    "SAFEnetwork",
+    "FUSE",
+    "filesystem",
+    "mount"
+  ],
+  "author": "Mark Hughes",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@maidsafe/safe-node-app": "0.10.3",
+    "async": "^2.6.0",
+    "debug": "^3.2.6",
+    "filesize": "^3.6.1",
+    "fuse-bindings": "^2.11.2",
+    "ipfs-api": "^22.3.0",
+    "mkdirp": "^0.5.1",
+    "mkdirp-promise": "^5.0.1",
+    "multibase": "^0.6.0",
+    "node-ipc": "^9.1.1",
+    "path": "^0.12.7",
+    "safenetworkjs": "github:theWebalyst/safenetworkjs",
+    "string": "^3.3.3",
+    "yargs": "^11.1.0"
+  },
+  "devDependencies": {
+    "pkg": "^4.3.4",
+    "standard": "^11.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theWebalyst/safe-drive.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theWebalyst/safe-drive/issues"
+  },
+  "homepage": "https://github.com/theWebalyst/safe-drive#readme"
+}
