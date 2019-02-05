@@ -78,13 +78,40 @@ cleanup() {
   read -p "Press enter to clear up test directories..."
   echo clearing test directories...
   rm -rf $SAFE_DRIVE_PATH tests-git
+  rm -f rsync.txt
 }
 trap cleanup EXIT
 
-# ------------------------ START OF TESTS -------------------------
 rm -rf $SAFE_DRIVE_PATH
 mkdir $SAFE_DRIVE_PATH
 if [ $(which tree) ]; then tree $SAFE_DRIVE_PATH; fi
+# ------------------------ START OF TESTS -------------------------
+
+echo ""
+echo "TESTING: rsync -u"
+set -e  # Exit on error
+set -v  # Echo output
+RS_SRC=./rsync.txt
+RS_DST=$SAFE_DRIVE_PATH/rsync.txt
+echo initial > $RS_SRC
+# 'rsync -u' MUST update to SAFE Drive
+rsync -uv $RS_SRC $RS_DST
+[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
+
+RS_DST_TIME="$(stat -c %Y $RS_DST)"
+# repeat 'rsync -u' should NOT update to SAFE Drive
+rsync -uv $RS_SRC $RS_DST
+[ "$RS_DST_TIME" = "$(stat -c %Y $RS_DST)" ]
+
+touch $RS_SRC
+# touch MUST cause update to SAFE Drive
+rsync -uv $RS_SRC $RS_DST
+[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
+
+echo update > $RS_SRC
+# modify MUST cause update to SAFE Drive
+rsync -uv $RS_SRC $RS_DST
+[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
 
 echo ""
 echo "TESTING: file and directory renaming"
@@ -314,14 +341,14 @@ diff -r $SYNCDIR/ $SAFE_DRIVE_PATH/
 set +v  # Don't output
 # Big file test
 # Use a big file ~200k to test multiple writes/reads
-# ../package-lock.json is suitable so use that!
+# ../yarn.lock is suitable so use that!
 set -v  # Echo output
 set -e  # Exit on error
 # Big file test
-cp ../package-lock.json $SAFE_DRIVE_PATH
-cp $SAFE_DRIVE_PATH/package-lock.json .
-diff ../package-lock.json package-lock.json
-rm $SAFE_DRIVE_PATH/package-lock.json ../tests/package-lock.json
+cp ../yarn.lock $SAFE_DRIVE_PATH
+cp $SAFE_DRIVE_PATH/yarn.lock .
+diff ../yarn.lock yarn.lock
+rm $SAFE_DRIVE_PATH/yarn.lock ../tests/yarn.lock
 
 set +v  # Don't output
 # Big test
@@ -379,7 +406,6 @@ if [ "$LIVE" == "true" ]; then
 fi
 
 set +v  # Don't echo output
-cd ..
 echo ""
 echo $SUCCESS_MESSAGE
 echo ""
