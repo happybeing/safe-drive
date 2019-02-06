@@ -49,6 +49,15 @@ if [ "$1" == "" ]; then
   exit
 fi
 
+if [ ! -d 'tests' ]; then
+  echo "You must run this script from the project directory as follows:"
+  echo ""
+  echo "  tests/test-safedrive.sh [mock|live|disk]"
+  echo ""
+  echo "For more help, run it with no parameters"
+  exit 0
+fi
+
 if [ "$1" == "live" ]; then
   LIVE=true
   echo "Running tests on mounted SAFE Drive (LIVE network)"
@@ -78,7 +87,7 @@ cleanup() {
   read -p "Press enter to clear up test directories..."
   echo clearing test directories...
   rm -rf $SAFE_DRIVE_PATH tests-git
-  rm -f rsync.txt
+  rm -rf cpdir1 rsync.txt
 }
 trap cleanup EXIT
 
@@ -86,6 +95,43 @@ rm -rf $SAFE_DRIVE_PATH
 mkdir $SAFE_DRIVE_PATH
 if [ $(which tree) ]; then tree $SAFE_DRIVE_PATH; fi
 # ------------------------ START OF TESTS -------------------------
+
+echo ""
+echo "TESTING: cp -ru"
+set -e  # Exit on error
+set -v  # Echo output
+CP_ROOT=cpdir1
+CP_DIR=$CP_ROOT/cpdir2
+CP_PATH=$CP_DIR/cp.txt
+CP_DST=$SAFE_DRIVE_PATH
+mkdir -p $CP_DIR
+echo initial > $CP_PATH
+# 'cp -ru' MUST update to SAFE Drive
+cp -ruv $CP_ROOT $CP_DST/$CP_ROOT/
+stat -c %Y $CP_PATH
+stat -c %Y $CP_DST/$CP_PATH
+[ $(stat -c %Y $CP_PATH) -le $(stat -c %Y $CP_DST/$CP_PATH) ]
+
+CP_DEST_TIME="$(stat -c %Y $CP_DST/$CP_PATH)"
+# repeat 'cp -ru' should NOT update to SAFE Drive
+cp -ruv $CP_ROOT $CP_DST/
+stat -c %Y $CP_PATH
+stat -c %Y $CP_DST/$CP_PATH
+[ $CP_DEST_TIME -eq $(stat -c %Y $CP_DST/$CP_PATH) ]
+
+touch $CP_DST/$CP_PATH
+# touch MUST cause update to SAFE Drive
+cp -ruv $CP_ROOT $CP_DST/
+stat -c %Y $CP_PATH
+stat -c %Y $CP_DST/$CP_PATH
+[ $(stat -c %Y $CP_PATH) -le $(stat -c %Y $CP_DST/$CP_PATH) ]
+
+echo update > $CP_PATH
+# modify MUST cause update to SAFE Drive
+cp -ruv $CP_ROOT $CP_DST/
+stat -c %Y $CP_PATH
+stat -c %Y $CP_DST/$CP_PATH
+[ $(stat -c %Y $CP_PATH) -le $(stat -c %Y $CP_DST/$CP_PATH) ]
 
 echo ""
 echo "TESTING: rsync -u"
@@ -96,7 +142,7 @@ RS_DST=$SAFE_DRIVE_PATH/rsync.txt
 echo initial > $RS_SRC
 # 'rsync -u' MUST update to SAFE Drive
 rsync -uv $RS_SRC $RS_DST
-[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
+[ "$(stat -c %Y $RS_SRC)" -le "$(stat -c %Y $RS_DST)" ]
 
 RS_DST_TIME="$(stat -c %Y $RS_DST)"
 # repeat 'rsync -u' should NOT update to SAFE Drive
@@ -106,12 +152,12 @@ rsync -uv $RS_SRC $RS_DST
 touch $RS_SRC
 # touch MUST cause update to SAFE Drive
 rsync -uv $RS_SRC $RS_DST
-[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
+[ "$(stat -c %Y $RS_SRC)" -le "$(stat -c %Y $RS_DST)" ]
 
 echo update > $RS_SRC
 # modify MUST cause update to SAFE Drive
 rsync -uv $RS_SRC $RS_DST
-[ "$(stat -c %Y $RS_SRC)" = "$(stat -c %Y $RS_DST)" ]
+[ "$(stat -c %Y $RS_SRC)" -le "$(stat -c %Y $RS_DST)" ]
 
 echo ""
 echo "TESTING: file and directory renaming"
@@ -345,10 +391,10 @@ set +v  # Don't output
 set -v  # Echo output
 set -e  # Exit on error
 # Big file test
-cp ../yarn.lock $SAFE_DRIVE_PATH
-cp $SAFE_DRIVE_PATH/yarn.lock .
-diff ../yarn.lock yarn.lock
-rm $SAFE_DRIVE_PATH/yarn.lock ../tests/yarn.lock
+cp yarn.lock $SAFE_DRIVE_PATH
+cp $SAFE_DRIVE_PATH/yarn.lock tests/yarn.lock
+diff yarn.lock tests/yarn.lock
+rm $SAFE_DRIVE_PATH/yarn.lock tests/yarn.lock
 
 set +v  # Don't output
 # Big test
