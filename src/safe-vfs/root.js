@@ -87,7 +87,7 @@ class RootHandler {
    * @param  {string} itemPath mounted path
    * @return {VfsHandler}      handler for itemPath (can be this)
    */
-  getHandlerFor (itemPath) {
+  async getHandlerFor (itemPath) {
     debug('getHandlerFor(%s) - containerRef: %o, mountPath: %s', itemPath, this._containerRef, this._mountPath)
     try {
       if (this._mountPath === itemPath) {
@@ -102,10 +102,12 @@ class RootHandler {
 
         let handler
         if (this._safeVfs.safeJs().defaultContainerNames.indexOf(itemRoot) !== -1) {
-          handler = this._safeVfs.mountContainer({safePath: itemRoot})
-          // Attempt to automount a SAFE URI
-          let uri = 'safe:/' + itemPath.substring(WEB_MOUNTS_NAME.length + 1)
-          handler = this._safeVfs.mountContainer({safeUri: uri})
+          handler = await this._safeVfs.mountContainer({safePath: itemRoot})
+          if (!handler) {
+            // Attempt to automount a SAFE URI
+            let uri = 'safe://' + itemPath.substring(WEB_MOUNTS_NAME.length + 1)
+            handler = await this._safeVfs.mountContainer({safeUri: uri})
+          }
         }
         if (handler) return handler
         return this // Default
@@ -143,7 +145,7 @@ class RootHandler {
         let safeUri = 'safe://' + (remainder ? prefix + '.' + remainder : prefix)
 
         let handler = new RootHandler(this._safeVfs, { 'safeUri': safeUri }, itemPath, false)
-        if (handler.getContainer(itemPath)) {
+        if (await handler.getContainer(itemPath)) {
           this._safeVfs.pathMapSet(itemPath, handler)
           return handler
         } else {
