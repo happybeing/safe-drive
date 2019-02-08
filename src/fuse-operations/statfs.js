@@ -12,10 +12,11 @@ module.exports = (safeVfs) => {
     statfs (itemPath, reply) {
       try {
         debug('statfs(\'%s\')', itemPath)
-        safeVfs.getHandler(itemPath).statfs(itemPath).then((data) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.statfs(itemPath).then((data) => {
           debug(data)
           reply(0, data)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to stat: ' + itemPath)
         debug(err)

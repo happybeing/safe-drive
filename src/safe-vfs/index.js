@@ -391,11 +391,11 @@ class SafeVfs {
    * @param  {stri} itemPath full mount path
    * @return {[type]}        a VFS handler for the item
    */
-  getHandler (itemPath) {
+  async getHandler (itemPath) {
     debug('getHandler(%s)', itemPath)
     if (itemPath === '') itemPath = '/'
-    let handler = this.pathMapGet(itemPath) ||
-      this.getHandler(path.dirname(itemPath))
+    let handler = this.pathMapGet(itemPath)
+    if (!handler) handler = await this.getHandler(path.dirname(itemPath))
 
     if (!handler) {
       throw new Error('SafeVFS getHandler() failed')

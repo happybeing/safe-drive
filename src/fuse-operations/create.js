@@ -7,14 +7,16 @@ module.exports = (safeVfs) => {
       try {
         debug('create(\'%s\', %s)', itemPath, mode)
 
-        safeVfs.getHandler(itemPath).create(itemPath, mode).then((fd) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.create(itemPath, mode)
+        .then((fd) => {
           if (fd > 0) {
             debug('created file (%s): %s', fd, itemPath)
             return reply(0, fd)
           }
           debug('failed to create file (%s): ', fd, itemPath)
           reply(Fuse.EREMOTEIO)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (e) {
         debug('failed to create file: ', itemPath)
         debug(e)

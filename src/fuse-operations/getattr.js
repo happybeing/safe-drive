@@ -37,8 +37,8 @@ module.exports = (safeVfs) => {
     getattr (itemPath, reply) {
       try {
         debug('getattr(\'%s\')', itemPath)
-        let handler = safeVfs.getHandler(itemPath)
-        handler.getattr(itemPath).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.getattr(itemPath).then((result) => {
           if (result === undefined) {
             debug('getattr(\'%s\') result: undefined reply(Fuse.ENOENT)', itemPath)
             reply(Fuse.ENOENT)
@@ -74,7 +74,7 @@ module.exports = (safeVfs) => {
             return
           }
           throw new Error('Unhandled result.entryType: ' + result.entryType)
-        }).catch((e) => {
+        })).catch((e) => {
           throw e
         })
       } catch (err) {

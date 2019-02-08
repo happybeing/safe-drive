@@ -12,7 +12,8 @@ module.exports = (safeVfs) => {
           return reply(fuseResult.returnCode, fuseResult.returnObject)
         }
 
-        safeVfs.getHandler(itemPath).rename(itemPath, newPath).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.rename(itemPath, newPath).then((result) => {
           if (result) {
             debug('Renamed: %s, to: %s', itemPath, newPath)
             // If this left itemPath parentDir empty, make a virtual directory
@@ -29,7 +30,7 @@ module.exports = (safeVfs) => {
           }
           debug('Rename failed - operation not supported')
           reply(Fuse.EOPNOTSUPP) // Not allowed (e.g. rename of fake-container)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to rename: %s, to: %s', itemPath, newPath)
         debug(err)

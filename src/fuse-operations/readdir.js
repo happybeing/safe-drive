@@ -14,12 +14,13 @@ module.exports = (safeVfs) => {
           return reply(fuseResult.returnCode, fuseResult.returnObject)
         }
 
-        safeVfs.getHandler(itemPath).readdir(itemPath).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.readdir(itemPath).then((result) => {
           // Add any virtual directories to the itemPath directory's listing
           result = safeVfs.vfsCache().mergeVirtualDirs(itemPath, result)
           debug('directory result: %o', result)
           return reply(0, result)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to readdir: ' + itemPath)
         debug(err)

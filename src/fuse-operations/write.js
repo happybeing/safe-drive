@@ -7,11 +7,12 @@ module.exports = (safeVfs) => {
       try {
         debug('write(\'%s\', %s, buf, %s, %s)', itemPath, fd, len, pos)
 
-        safeVfs.getHandler(itemPath).write(itemPath, fd, buf, len, pos).then((bytes) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.write(itemPath, fd, buf, len, pos).then((bytes) => {
           debug('wrote %s bytes', bytes)
           // debug('data: %s', buf.slice(0, bytes))
           reply(bytes)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to write file: ' + itemPath)
         debug(err)

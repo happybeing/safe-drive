@@ -6,7 +6,8 @@ module.exports = (safeVfs) => {
     unlink (itemPath, reply) {
       try {
         debug('unlink(\'%s\')', itemPath)
-        safeVfs.getHandler(itemPath).unlink(itemPath).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.unlink(itemPath).then((result) => {
           debug('unlinked: %s', itemPath)
           if (result.wasLastItem) {
             // Make a virtual directory to replace the fake-container at parentDir
@@ -14,7 +15,7 @@ module.exports = (safeVfs) => {
             if (parentDir !== '') safeVfs.vfsCache().mkdirVirtual(parentDir)
           }
           reply(0)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to unlink: ' + itemPath)
         debug(err)

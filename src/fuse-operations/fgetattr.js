@@ -16,8 +16,8 @@ module.exports = (safeVfs) => {
     fgetattr (itemPath, fd, reply) {
       try {
         debug('fgetattr(\'%s\', %s)', itemPath, fd)
-        let handler = safeVfs.getHandler(itemPath)
-        handler.fgetattr(itemPath, fd).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.fgetattr(itemPath, fd).then((result) => {
           // TODO implement more specific error handling like this on all fuse-ops
           if (result && result.entryType === SafeJsApi.containerTypeCodes.notFound) {
             return reply(Fuse.ENOENT)
@@ -36,7 +36,7 @@ module.exports = (safeVfs) => {
             uid: process.getuid ? process.getuid() : 0,
             gid: process.getgid ? process.getgid() : 0
           })
-        }).catch((e) => {
+        })).catch((e) => {
           debug(e.message + ' - for itemPath:' + itemPath)
           reply(Fuse.EREMOTEIO)
         })

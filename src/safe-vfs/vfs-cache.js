@@ -281,7 +281,7 @@ class VfsCaching {
 
     let fuseResult
     try {
-      let handler = this._safeVfs.getHandler(itemPath)
+      let handler = await this._safeVfs.getHandler(itemPath)
       let containerPath = handler.pruneMountPath(itemPath)
       let container = await handler.getContainer(itemPath)
 

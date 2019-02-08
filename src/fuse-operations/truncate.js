@@ -7,10 +7,11 @@ module.exports = (safeVfs) => {
       try {
         debug('truncate(\'%s\', %s)', itemPath, size)
 
-        safeVfs.getHandler(itemPath).truncate(itemPath, size).then((result) => {
+        safeVfs.getHandler(itemPath)
+        .then((handler) => handler.truncate(itemPath, size).then((result) => {
           debug('truncated: %s at %s bytes', itemPath, size)
           reply(0)
-        }).catch((e) => { throw e })
+        })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to truncate: ' + itemPath)
         debug(err)
