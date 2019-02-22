@@ -2,7 +2,11 @@
 
 # What is SAFE Drive?
 
-SAFE Drive lets you access your SAFE Network storage as if it is on your local drive. It implements a virtual drive for SAFE Network on Windows, Mac OS and Linux computers, and uses the nodejs `fuse-bindings` library. Features:
+SAFE Drive lets you access your SAFE Network storage as if it is on your local drive. It implements a virtual drive for SAFE Network on Windows, Mac OS and Linux computers, and uses the nodejs `fuse-bindings` library.
+
+Features available now are listed below along with work in progress and future plans, but at your own risk!
+
+WARNING: This software is still 'alpha' and may lose or corrupt data. Also be aware that all software contains bugs, so it is important for you to ensure that your data is backed up appropriately.
 
 ### Files (read only access)
 - access your SAFE containers under `~/SAFE` (i.e. `_public`, `_documents, _music, _video, _photos`)
@@ -18,13 +22,22 @@ SAFE Drive lets you access your SAFE Network storage as if it is on your local d
 - mount the files shared via anyone's public name with `ls ~/SAFE/_webMounts/<public name>`
 - read-only access any public files via the mounts under `ls ~/SAFE/_webMounts`
 
+### Example Applications
+- <strong>Online Docs using LibreOffice:</strong> Using LibreOffice you can load and save documents directly on your SAFE Drive. If you save under a SAFE URI others can read them using SAFE Drive's 'web mounts' feature. Using SAFE means your private documents are really private and secure, as well as accessible to you from any device with access to SAFE Network, anywhere in the world.
+- <strong>Backup:</strong> You can copy changed files to a backup location and know they are SAFE and always accessible. On Linux `cp -ru` or `rsync -ru` are recommended for this.
+- <strong>dWeb Blog:</strong> is an example of a blazingly fast website that you can adapt and modify to deploy to both Web and SAFE Network with a single command. Visit dWeb Blog to learn how [on the Web](https://dweb.happybeing.com/blog/post/001-how-to-set-up-your-own-dweb-site.md) or [on SAFE Network](safe://dweb/blog/post/001-how-to-set-up-your-own-dweb-site.md) (requires SAFE Browser).
+- <strong>safegit - Decentralised Git Source Code Control:</strong> is a script which enables you to publish a git repository to SAFE Network where others can clone it, and can submit pull requests back to you. Read how [on the Web](https://dweb.happybeing.com/blog/post/002-safegit-decentralised-git-on-safe-network.md) or [on SAFE Network](safe://dweb/blog/post/002-safegit-decentralised-git-on-safe-network.md) (requires SAFE Browser).
+
+Let us know how you use SAFE Drive by submitting additions to this list in a message or pull request.
+
+
 ### Work In Progress
-- support decentralised `git` by pushing to headless repositories anyone can access
+- support decentralised `git` by pushing to headless repositories anyone can access (see safegit above which allows this now, although other work is also ongoing)
 - provide a locally hosted web interface for decentralised git (similar to github)
 - provide a decentralised github like web app, hosted on SAFE Network
 
 ### Planned Features
-- save application files to SAFE Drive (this is not reliable, so copy manually or use `rsync`)
+- save application files to SAFE Drive. This works with some applications such as LibreOffice and Vim, but is not reliable for all applications, but you can instead copy manually or use `rsync`
 - create public names and services:
     - create decentralised domains
     - upload a website to a domain
@@ -61,7 +74,7 @@ SAFE is an open source project of @maidsafe, a private company which is majority
 
 # How To Use SAFE Drive
 
-SAFE Drive is currently in development so to use it you will need to set up a development environment using `git`, `yarn` and `nodejs`. 
+SAFE Drive is currently in development so to use it you will need to set up a development environment using `git`, `yarn` and `nodejs`.
 
 To use SAFE Drive, follow the [How To Set-up SAFE Drive](#how-to-set-up-safe-drive) instructions. This covers how to get an account on SAFE Network, install the dependencies for your operating system, and set-up SAFE Drive for development. When you have done all that, you're ready to use SAFE Drive:
 
@@ -269,11 +282,11 @@ pkill node ; sudo umount ~/SAFE
 Note: `SAFENETWORKJS_TESTS=testing` is only needed when you intend to run the test scripts in `./tests`. It is a signal to SafenetworkJS that tells it to create a public container  (on your SAFE account) needed by the test scripts, if it doesn't already exist. To run the tests:
 ```
 cd ./safe-drive/tests
-./test-safedrive.sh mock 
+./test-safedrive.sh mock
 ```
 Or to omit some 'expensive' tests when using the live network:
 ```
-./test-safedrive.sh live 
+./test-safedrive.sh live
 ```
 More options are available and will be listed if you omit the parameter:
 ```
