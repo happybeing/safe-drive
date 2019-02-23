@@ -1,4 +1,7 @@
-`[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/standard/standard)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/standard/standard)
+<center><h1>SAFE Drive</h1></center>
+
+![safegit logo](https://dweb.happybeing.com/images/safedrive-logo-017778b748a2fa41a1a79855bc90dd6dda5f5051_2_1064x1000.jpeg)
 
 # What is SAFE Drive?
 
