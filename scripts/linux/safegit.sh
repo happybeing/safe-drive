@@ -4,15 +4,15 @@ set -e  # Exit on error
 
 # TODO:
 # [/] test on live network / see if bug (below) persists
-# [ ] move this stuff to SAFE Drive issue(s)...
+# [ ] move these todos to SAFE Drive issue(s)...
 # [ ] add 'safegit fork sub-name.public-name your-public-name' which creates a fork of sub-name.public-name at sub-name.your-public-name, as follows:
 #     git clone ~/SAFE/_webMounts/<public-name>/root-<sub-name>
 #     git remote remove origin # we don't use 'git push origin' but safegit push (which does 'git push safegit' and then copies to SAFE)
 #     git remote add upstream ~/SAFE/_webMounts/<public-name>/root-<sub-name>
 #     safegit create <sub-name>.<your-public-name> # which sets up remote 'safegit'
 # [ ] BUG the cp -ruv doesn't seem to do anything, so rsync is doing the work
-#   -> attempt to replicate this on mock and live networks failed
-# [ ] get <repo-name> from `git remote -v` instead of the command line so that
+#   -> attempt to replicate this on mock and live networks but now seems ok
+# [ ] obtain <repo-name> from `git remote -v` instead of the command line so that
 #     safegit push doesn't need a parameter.
 
 usage() {
@@ -65,7 +65,7 @@ HEADLESS_PATH=$HEADLESS_DIR/$HEADLESS_REPO
 
 SAFE_SERVICE=${PARAM_REPO/\.*/}
 SAFE_NAME=${PARAM_REPO/*\./}
-if [ "$SAFE_SERVICE" = "" -o "$SAFE_NAME" = "" ]; then echo "Error: you must provide a valid repo-name (a subname followed by '.' followed by a public name)" && exit 1; fi
+if [ "$SAFE_SERVICE" = "" -o "$SAFE_NAME" = "" ]; then echo "Error: you must provide a valid repo-name (a subname followed by '.' followed by a public name)" && usage && exit 1; fi
 
 SAFE_DIR=~/SAFE/_public/$SAFE_NAME
 # safegit inserts 'root-' here because this is the convention SAFE Network
@@ -103,4 +103,4 @@ if [ $1 = 'push' ]; then
 fi
 
 set +v  # Don't echo output
-usage()
+usage
