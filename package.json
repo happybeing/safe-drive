@@ -46,6 +46,7 @@
     "multibase": "^0.6.0",
     "node-ipc": "^9.1.1",
     "path": "^0.12.7",
+    "rdflib": "^0.19.1",
     "safenetworkjs": "github:theWebalyst/safenetworkjs",
     "string": "^3.3.3",
     "yargs": "^11.1.0"
