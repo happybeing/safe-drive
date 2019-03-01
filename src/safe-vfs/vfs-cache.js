@@ -1,5 +1,5 @@
 const Fuse = require('fuse-bindings')
-const SafeJsApi = require('safenetworkjs')
+const safeJs = require('safenetworkjs').safeJs
 const debug = require('debug')('safe-fuse:vfs-cache')
 
 /**
@@ -134,12 +134,12 @@ class VfsCaching {
 
         if (!pathExists) {
           // Re-create virtual directory for immediate parent(s) until one exists
-          let parentDir = SafeJsApi.parentPathNoDot(itemPath)
+          let parentDir = safeJs.parentPathNoDot(itemPath)
           while (parentDir !== '' && parentDir !== '/') {
             let result = await this.getattr(parentDir)
             if (result && result.returnCode === Fuse.ENOENT) {
               this.mkdirVirtual(parentDir)
-              parentDir = SafeJsApi.parentPathNoDot(parentDir)
+              parentDir = safeJs.parentPathNoDot(parentDir)
             } else {
               parentDir = ''
             }
@@ -173,10 +173,10 @@ class VfsCaching {
   // When a file is created, check for and clear virtual folders on its path
   async closeVirtual (itemPath) {
     debug('%s.closeVirtual(%s)', this.constructor.name, itemPath)
-    let nextDir = SafeJsApi.parentPathNoDot(itemPath)
+    let nextDir = safeJs.parentPathNoDot(itemPath)
     while (nextDir !== '' && nextDir !== '/') {
       if (this._directoryMap[nextDir]) await this.rmdirVirtual(nextDir, true)
-      nextDir = SafeJsApi.parentPathNoDot(nextDir)
+      nextDir = safeJs.parentPathNoDot(nextDir)
     }
 
     this._debugListVirtualDirectories()
@@ -263,10 +263,10 @@ class VfsCaching {
    */
 
   openVirtual (itemPath, flags) {
-    let parentDir = SafeJsApi.parentPathNoDot(itemPath)
+    let parentDir = safeJs.parentPathNoDot(itemPath)
     while (this._directoryMap[parentDir]) {
       this._directoryMap[parentDir] = undefined
-      parentDir = SafeJsApi.parentPathNoDot(parentDir)
+      parentDir = safeJs.parentPathNoDot(parentDir)
     }
 
     return undefined  // For open, the action is always incomplete
@@ -323,13 +323,13 @@ class VfsCaching {
     let fuseResult = new FuseResult()
 
     try {
-      if (result.entryType === SafeJsApi.containerTypeCodes.file ||
-          result.entryType === SafeJsApi.containerTypeCodes.newFile ||
-          result.entryType === SafeJsApi.containerTypeCodes.fakeContainer ||
-          result.entryType === SafeJsApi.containerTypeCodes.nfsContainer ||
-          result.entryType === SafeJsApi.containerTypeCodes.servicesContainer ||
-          result.entryType === SafeJsApi.containerTypeCodes.service ||
-          result.entryType === SafeJsApi.containerTypeCodes.defaultContainer ||
+      if (result.entryType === safeJs.containerTypeCodes.file ||
+          result.entryType === safeJs.containerTypeCodes.newFile ||
+          result.entryType === safeJs.containerTypeCodes.fakeContainer ||
+          result.entryType === safeJs.containerTypeCodes.nfsContainer ||
+          result.entryType === safeJs.containerTypeCodes.servicesContainer ||
+          result.entryType === safeJs.containerTypeCodes.service ||
+          result.entryType === safeJs.containerTypeCodes.defaultContainer ||
           result.entryType === 'virtualDirectory') {
         debug('%s._makeGetattrResult(\'%s\') result type: %s', this.constructor.name, itemPath, result.entryType)
         fuseResult.returnCode = 0
@@ -349,8 +349,8 @@ class VfsCaching {
         return fuseResult
       }
       // TODO implement more specific error handling like this on other fuse-ops
-      if (result.entryType === SafeJsApi.containerTypeCodes.notFound ||
-          result.entryType === SafeJsApi.containerTypeCodes.deletedEntry) {
+      if (result.entryType === safeJs.containerTypeCodes.notFound ||
+          result.entryType === safeJs.containerTypeCodes.deletedEntry) {
         debug('%s._makeGetattrResult(\'%s\') result type: %s reply(Fuse.ENOENT)', this.constructor.name, itemPath, result.entryType)
         return fuseResult
       }

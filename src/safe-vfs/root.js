@@ -1,6 +1,5 @@
 const path = require('path')  // Cross platform path handling
-const SafeJsApi = require('safenetworkjs')
-const SafeContainer = require('safenetworkjs').SafeContainer
+const safeJs = require('safenetworkjs').safeJs
 
 const debug = require('debug')('safe-fuse:vfs:root')
 
@@ -427,7 +426,7 @@ class RootHandler {
  * classes).
  */
 
-class RootContainer extends SafeContainer {
+class RootContainer extends safeJs.SafeContainer {
   constructor (rootHandler) {
     // super() params are dummy values as we only use the cache implementation
     super(undefined, '', '', '')
@@ -509,13 +508,13 @@ class RootContainer extends SafeContainer {
           size: 0,
           version: -1,
           'isFile': false,
-          entryType: SafeJsApi.containerTypeCodes.defaultContainer
+          entryType: safeJs.containerTypeCodes.defaultContainer
         }
       }
 
       if (!result) {
         debug('RootContainer - item not found: ' + itemPath)
-        result = { entryType: SafeJsApi.containerTypeCodes.notFound }
+        result = { entryType: safeJs.containerTypeCodes.notFound }
       }
 
       return this._cacheResultForPath(itemPath, fileOperation, result)

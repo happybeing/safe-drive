@@ -3,7 +3,7 @@
 const debug = require('debug')('safe-fuse:bin')
 const Os = require('os')
 const path = require('path')
-const safeJsApi = require('safenetworkjs').SafenetworkApi
+const safeJs = require('safenetworkjs').safeJs
 const SafeVfs = require('./src/safe-vfs')
 const yargs = require('yargs')
 
@@ -45,16 +45,16 @@ mountFailedMessage += (process.platform !== 'win32' ? '\n\nType \'sudo umount ~/
 let safeVfs
 
 // TESTING
-// TODO re-visit using safeJsApi.authoriseWithSafeBrowser (see commented out code below)
+// TODO re-visit using safeJs.authoriseWithSafeBrowser (see commented out code below)
 try {
-  debug('try safeJsApi.safeApi.bootstrap()...')
-  safeJsApi.safeApi.bootstrap(appConfig, appContainers, containerOpts, argv).then((safeApp) => {
-    safeJsApi.setSafeApi(safeApp)
-    safeJsApi._safeAppConfig = appConfig
-    safeJsApi._safeAppContainers = appContainers
-    safeJsApi._safeContainerOpts = containerOpts
-    safeJsApi._safeAuthUri = ''  // TODO refactor to get this from safeApi.bootstrap()
-    safeVfs = new SafeVfs(safeJsApi)
+  debug('try safeJs.safeApi.bootstrap()...')
+  safeJs.safeApi.bootstrap(appConfig, appContainers, containerOpts, argv).then((safeApp) => {
+    safeJs.setSafeAppHandle(safeApp)
+    safeJs._safeAppConfig = appConfig
+    safeJs._safeAppContainers = appContainers
+    safeJs._safeContainerOpts = containerOpts
+    safeJs._safeAuthUri = ''  // TODO refactor to get this from safeApi.bootstrap()
+    safeVfs = new SafeVfs(safeJs)
     safeVfs.mountFuse(mountPath, { fuse: { displayFolder: true, force: true } })
     .then(_ => Promise.all([
       // TODO replace the following fixed defaults with CLI configured mounts
@@ -94,9 +94,9 @@ try {
 // Original
 // try {
 //   debug('try authoriseWithSafeBrowser()...')
-//   safeJsApi.authoriseWithSafeBrowser(appConfig, appContainers, containerOpts, argv)
+//   safeJs.authoriseWithSafeBrowser(appConfig, appContainers, containerOpts, argv)
 //   .then(async (app) => {
-//     safeVfs = new SafeVfs(safeJsApi)
+//     safeVfs = new SafeVfs(safeJs)
 //     safeVfs.mountFuse(mountPath, { fuse: { displayFolder: true, force: true } })
 //     .then(_ => Promise.all([
 //       // TODO replace the following fixed defaults with CLI configured mounts
