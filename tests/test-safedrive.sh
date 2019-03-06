@@ -241,6 +241,9 @@ echo v1 > $SAFE_DRIVE_PATH/del-dir/delete-me
 echo "v22" > $SAFE_DRIVE_PATH/file
 [ "$(cat $SAFE_DRIVE_PATH/file)" = "v22" ]
 
+echo "v23" > $SAFE_DRIVE_PATH/file
+[ "$(cat $SAFE_DRIVE_PATH/file)" = "v23" ]
+
 echo "v22" > $SAFE_DRIVE_PATH/play-dir/play-with-me
 [ "$(cat $SAFE_DRIVE_PATH/play-dir/play-with-me)" = "v22" ]
 
