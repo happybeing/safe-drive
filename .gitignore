@@ -7,6 +7,7 @@ notebook.zim
 releases/
 releases-unpacked/
 vaults/
+testing-safedrive-syncdir/
 
 ### What follows is the standard .gitignore for Node
 
