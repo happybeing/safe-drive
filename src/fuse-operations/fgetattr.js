@@ -18,24 +18,30 @@ module.exports = (safeVfs) => {
         debug('fgetattr(\'%s\', %s)', itemPath, fd)
         safeVfs.getHandler(itemPath)
         .then((handler) => handler.fgetattr(itemPath, fd).then((result) => {
-          // TODO implement more specific error handling like this on all fuse-ops
-          if (result && result.entryType === SafeJsApi.containerTypeCodes.notFound) {
-            return reply(Fuse.ENOENT)
-          }
+          if (result.status === null) {
+            let attributes = result.attributes
 
-          reply(0, {
-            mtime: result.modified,
-            atime: result.accessed,
-            ctime: result.created,
-            nlink: 1,
-            size: result.size,    // bytes
-            // blocks: result.size, // TODO
-            // perm: ?,             // TODO also: dev, ino, nlink, rdev, blksize
-            // https://github.com/TooTallNate/stat-mode/blob/master/index.js
-            mode: (result.isFile ? 33188 : 16877),
-            uid: process.getuid ? process.getuid() : 0,
-            gid: process.getgid ? process.getgid() : 0
-          })
+            // TODO implement more specific error handling like this on all fuse-ops
+            if (attributes && attributes.entryType === SafeJsApi.containerTypeCodes.notFound) {
+              return reply(Fuse.ENOENT)
+            }
+
+            return reply(0, {
+              mtime: attributes.modified,
+              atime: attributes.accessed,
+              ctime: attributes.created,
+              nlink: 1,
+              size: attributes.size,    // bytes
+              // blocks: attributes.size, // TODO
+              // perm: ?,             // TODO also: dev, ino, nlink, rdev, blksize
+              // https://github.com/TooTallNate/stat-mode/blob/master/index.js
+              mode: (attributes.isFile ? 33188 : 16877),
+              uid: process.getuid ? process.getuid() : 0,
+              gid: process.getgid ? process.getgid() : 0
+            })
+          }
+          debug('fgetattr failed with error: ' + result.status.message)
+          return reply(Fuse.EREMOTEIO)
         })).catch((e) => {
           debug(e.message + ' - for itemPath:' + itemPath)
           reply(Fuse.EREMOTEIO)

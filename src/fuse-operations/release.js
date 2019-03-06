@@ -9,11 +9,14 @@ module.exports = (safeVfs) => {
 
         safeVfs.getHandler(itemPath)
         .then((handler) => handler.close(itemPath, fd).then((result) => {
-          debug('released file descriptor %s', fd)
-          // Clear any virtual directories in itemPath path, in case its a new file
-          return safeVfs.vfsCache().closeVirtual(itemPath).then(() => {
-            reply(result ? 0 : Fuse.EREMOTEIO)
-          }).catch((e) => { throw e })
+          if (result === null) {
+            debug('released file descriptor %s', fd)
+            // Clear any virtual directories in itemPath path, in case its a new file
+            return safeVfs.vfsCache().closeVirtual(itemPath).then(() => {
+              return reply(0)
+            }).catch((e) => { throw e })
+          }
+          throw result
         })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to close file: ' + itemPath)

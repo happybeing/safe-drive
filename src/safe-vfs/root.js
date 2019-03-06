@@ -4,6 +4,7 @@ const safeJs = require('safenetworkjs').safeJs
 const debug = require('debug')('safe-fuse:vfs:root')
 
 const WEB_MOUNTS_NAME = '_webMounts'
+const SUCCESS = null
 
 /**
  * VFS RootHandler the root ('/') container, and containers mounted at the root
@@ -465,10 +466,14 @@ class RootContainer extends safeJs.SafeContainer {
       }
 
       if (!isInMap) throw new Error('RootContainer - item not found: ' + itemPath)
-    } catch (e) { debug(e) }
+    } catch (e) {
+      debug(e)
+      return { status: e }
+   }
+
 
     debug('listing: %o', listing)
-    return listing
+    return { status: SUCCESS, 'listing': listing }
   }
 
   /**
@@ -490,6 +495,8 @@ class RootContainer extends safeJs.SafeContainer {
 
   async itemAttributesResultsRef (itemPath, fd) {
     debug('%s.itemAttributesResultsRef(\'%s\', %s)', this.constructor.name, itemPath, fd)
+    const SUCCESS = null
+
     try {
       let fileOperation = 'itemAttributes'
 
@@ -517,8 +524,13 @@ class RootContainer extends safeJs.SafeContainer {
         result = { entryType: safeJs.containerTypeCodes.notFound }
       }
 
-      return this._cacheResultForPath(itemPath, fileOperation, result)
-    } catch (e) { debug(e) }
+      let resultsRef = this._cacheResultForPath(itemPath, fileOperation, result)
+      return { status: SUCCESS, 'resultsRef': resultsRef }
+
+    } catch (e) {
+      debug(e)
+      return { status: e }
+    }
   }
 }
 

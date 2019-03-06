@@ -291,9 +291,11 @@ class VfsCaching {
       if (resultHolder) result = resultHolder[containerOp]
 
       if (!result) {
-        let resultsRef = await container.itemAttributesResultsRef(containerPath)
-        result = resultsRef.result
-        delete result.fuseResult //  No longer valid
+        let containerResult = await container.itemAttributesResultsRef(containerPath)
+        if (containerResult.status === null) {
+          result = containerResult.resultsRef.result
+          delete result.fuseResult //  No longer valid
+        }
       }
 
       if (result && result.fuseResult) {

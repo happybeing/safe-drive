@@ -16,10 +16,14 @@ module.exports = (safeVfs) => {
 
         safeVfs.getHandler(itemPath)
         .then((handler) => handler.readdir(itemPath).then((result) => {
-          // Add any virtual directories to the itemPath directory's listing
-          result = safeVfs.vfsCache().mergeVirtualDirs(itemPath, result)
-          debug('directory result: %o', result)
-          return reply(0, result)
+          if (result.status === null) {
+            // Add any virtual directories to the itemPath directory's listing
+            let listing = safeVfs.vfsCache().mergeVirtualDirs(itemPath, result.listing)
+            debug('directory result: %o', listing)
+            return reply(0, listing)
+          }
+          debug('readdir failed with error: ' + result.status.message)
+          return reply(Fuse.EREMOTEIO)
         })).catch((e) => { throw e })
       } catch (err) {
         debug('Failed to readdir: ' + itemPath)
