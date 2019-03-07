@@ -64,11 +64,11 @@ NOTES:
     [/] read
     [/] getattr
     [/] statfs
+    [/] write
+    [/] create
+    [/] unlink
+    [/] rename
     [ ] mkdir
-    [ ] write
-    [ ] create
-    [ ] unlink
-    [ ] rename
     [ ] rmdir
     [ ] getattr - work out additional return settings: blocks, perm, dev, ino, nlink, rdev, blksize
     [ ] statfs - review settings
