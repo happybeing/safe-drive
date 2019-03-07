@@ -8,14 +8,14 @@ module.exports = (safeVfs) => {
         debug('rename(\'%s\', \'%s\')', itemPath, newPath)
         let fuseResult = safeVfs.vfsCache().renameVirtual(itemPath, newPath)
         if (fuseResult) {
-          debug('Renamed: %s, to: %s', itemPath, newPath)
+          debug('Renamed/moved: %s, to: %s', itemPath, newPath)
           return reply(fuseResult.returnCode, fuseResult.returnObject)
         }
 
         safeVfs.getHandler(itemPath)
         .then((handler) => handler.rename(itemPath, newPath).then((result) => {
           if (result.status === null) {
-            debug('Renamed: %s, to: %s', itemPath, newPath)
+            debug('Rename/moved: %s, to: %s', itemPath, newPath)
             // If this left itemPath parentDir empty, make a virtual directory
             // to replace the lost fake-container
             if (result.wasLastItem) {
@@ -28,11 +28,11 @@ module.exports = (safeVfs) => {
               return reply(0)
             }).catch((e) => { throw e })
           }
-          debug('rename failed with error: ' + result.status.message)
+          debug('rename/move failed with error: ' + result.status.message)
           return reply(Fuse.EREMOTEIO)
         })).catch((e) => { throw e })
       } catch (err) {
-        debug('Failed to rename: %s, to: %s', itemPath, newPath)
+        debug('Failed to rename/move: %s, to: %s', itemPath, newPath)
         debug(err)
         reply(Fuse.EREMOTEIO)
       }

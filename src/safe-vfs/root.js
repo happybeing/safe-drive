@@ -399,7 +399,7 @@ class RootHandler {
     debug('RootHandler for %o mounted at %s rename(\'%s\', \'%s\')', this._containerRef, this._mountPath, itemPath, newPath)
     let containerItem = this.pruneMountPath(itemPath)
     let newContainerItem = this.pruneMountPath(newPath)
-    return (await this.getContainer(itemPath)).renameFile(containerItem, newContainerItem, newPath).catch((e) => { debug(e) })
+    return (await this.getContainer(itemPath)).moveFile(containerItem, newContainerItem, newPath).catch((e) => { debug(e) })
   }
 
   async rmdir (itemPath) { debug('TODO rmdir(' + itemPath + ') not implemented'); return {} }
