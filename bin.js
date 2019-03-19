@@ -33,9 +33,8 @@ const appContainers = {
   _videos: ['Read', 'Insert', 'Update', 'Delete', 'ManagePermissions'] // TODO maybe reduce defaults later
 }
 
-const containerOpts = {
-  own_container: false
-}
+// InitOptions (see SAFE API initialiseApp())
+const appOptions = undefined
 
 let mountFailedMessage = 'Failed to un-mount SAFE Drive volume'
 mountFailedMessage += (process.platform !== 'win32' ? '\n\nType \'sudo umount ~/SAFE\' and try again.'
@@ -44,16 +43,10 @@ mountFailedMessage += (process.platform !== 'win32' ? '\n\nType \'sudo umount ~/
 // Auth with Safetnetwork
 let safeVfs
 
-// TESTING
-// TODO re-visit using safeJs.authoriseWithSafeBrowser (see commented out code below)
 try {
   debug('try safeJs.safeApi.bootstrap()...')
-  safeJs.safeApi.bootstrap(appConfig, appContainers, containerOpts, argv).then((safeApp) => {
-    safeJs.setSafeAppHandle(safeApp)
-    safeJs._safeAppConfig = appConfig
-    safeJs._safeAppContainers = appContainers
-    safeJs._safeContainerOpts = containerOpts
-    safeJs._safeAuthUri = ''  // TODO refactor to get this from safeApi.bootstrap()
+  let ownContainer = false
+  safeJs.initAuthorised(appConfig, appContainers, ownContainer, appOptions, argv).then((safeApp) => {
     safeVfs = new SafeVfs(safeJs)
     safeVfs.mountFuse(mountPath, { fuse: { displayFolder: true, force: true } })
     .then(_ => Promise.all([
@@ -90,38 +83,6 @@ try {
   console.error(err.message)
   debug(err, mountFailedMessage)
 }
-
-// Original
-// try {
-//   debug('try authoriseWithSafeBrowser()...')
-//   safeJs.authoriseWithSafeBrowser(appConfig, appContainers, containerOpts, argv)
-//   .then(async (app) => {
-//     safeVfs = new SafeVfs(safeJs)
-//     safeVfs.mountFuse(mountPath, { fuse: { displayFolder: true, force: true } })
-//     .then(_ => Promise.all([
-//       // TODO replace the following fixed defaults with CLI configured mounts
-//       safeVfs.mountContainer({safePath: '_public'}),
-//       // safeVfs.mountContainer({safePath: '_documents'}),
-//       // safeVfs.mountContainer({safePath: '_downloads'}),
-//       // safeVfs.mountContainer({safePath: '_music'}),
-//       // safeVfs.mountContainer({safePath: '_pictures'}),
-//       // safeVfs.mountContainer({safePath: '_videos'}),
-//       safeVfs.mountContainer({safePath: '_publicNames'})
-//     ]))
-//     .then(_ => {
-//       debug(`Mounted SAFE filesystem on ${mountPath}`)
-//     })
-//     .catch((err) => {
-//       debug(err, mountFailedMessage)
-//     })
-//   })
-//   .catch((err) => {
-//     debug(err, mountFailedMessage)
-//   })
-// } catch (err) {
-//   console.error(err.message)
-//   debug(err, mountFailedMessage)
-// }
 
 let destroyed = false
 
