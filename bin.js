@@ -103,4 +103,5 @@ process.on('SIGINT', () => {
     debug(msg)
     debug(err)
   }
+  process.exit(2)
 })
