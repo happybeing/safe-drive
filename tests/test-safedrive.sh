@@ -215,7 +215,7 @@ rm -rf $SAFE_DRIVE_PATH/dir-tree
 [ ! -d $SAFE_DRIVE_PATH/dir-tree ]
 [ ! -d $SAFE_DRIVE_PATH/dir-tree/dir-tree2 ]
 [ ! -d $SAFE_DRIVE_PATH/dir-tree/dir-tree2/dir-tree3 ]
-[ ! -f $SAFE_DRIVE_PATH/dir-tree/file ]
+[ ! -f $SAFE_DRIVE_PATH/dir-tree/file1 ]
 [ ! -f $SAFE_DRIVE_PATH/dir-tree/dir-tree2/dir-tree3/file3 ]
 [ ! -d $SAFE_DRIVE_PATH/dir-tree ]
 [ ! -d $SAFE_DRIVE_PATH/dir-tree ]
@@ -283,6 +283,26 @@ rmdir $SAFE_DRIVE_PATH/del-dir
 [ ! -d $SAFE_DRIVE_PATH/del-dir ]
 set +v  # Don't echo output
 echo "SUCCESS: file creation and modification"
+echo ""
+
+# Catch bug where a deleted file masks a directory of same name
+set -v  # Echo output
+[ ! -d $SAFE_DRIVE_PATH/filedir ]
+[ ! -f $SAFE_DRIVE_PATH/filedir ]
+echo "junk in filedir (file)" > $SAFE_DRIVE_PATH/filedir
+[ -f $SAFE_DRIVE_PATH/filedir ]
+rm $SAFE_DRIVE_PATH/filedir
+[ ! -d $SAFE_DRIVE_PATH/filedir ]
+[ ! -f $SAFE_DRIVE_PATH/filedir ]
+mkdir $SAFE_DRIVE_PATH/filedir
+[ -d $SAFE_DRIVE_PATH/filedir ]
+echo "junk in filedir/file.txt" > $SAFE_DRIVE_PATH/filedir/file.txt
+[ -d $SAFE_DRIVE_PATH/filedir ]
+[ -f $SAFE_DRIVE_PATH/filedir/file.txt ]
+rm $SAFE_DRIVE_PATH/filedir/file.txt
+[ ! -f $SAFE_DRIVE_PATH/filedir/file.txt ]
+set +v  # Don't echo output
+echo "SUCCESS: deleted file doesn't obscure directory of same name"
 echo ""
 
 set +e  # Don't exit on error
