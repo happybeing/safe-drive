@@ -351,8 +351,7 @@ class VfsCaching {
         return fuseResult
       }
       // TODO implement more specific error handling like this on other fuse-ops
-      if (result.entryType === safeJs.containerTypeCodes.notFound ||
-          result.entryType === safeJs.containerTypeCodes.deletedEntry) {
+      if (result.entryType === safeJs.containerTypeCodes.notFound) {
         debug('%s._makeGetattrResult(\'%s\') result type: %s reply(Fuse.ENOENT)', this.constructor.name, itemPath, result.entryType)
         return fuseResult
       }
