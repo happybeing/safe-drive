@@ -1,3 +1,5 @@
+DEPRACATED see http://github.com/theWebalyst/safenetwork-git/
+
 #!/bin/bash
 set +v  # Don't echo output
 set -e  # Exit on error
