@@ -36,7 +36,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "@maidsafe/safe-node-app": "0.10.3",
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "debug": "^4.1.1",
     "filesize": "^3.6.1",
     "fuse-bindings": "^2.11.2",
